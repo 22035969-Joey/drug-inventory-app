@@ -6,7 +6,7 @@ st.sidebar.title("Instructions for Data Entry")
 st.sidebar.write("""
 1. **Scan barcode and drug name**: Information will be retrieved from the database.
 2. **Weight Recording**: 
-    - Click on the appropriate field (Box, Strip, Tablet/Capsule) and then click **‘Add’** to enter the weight captured from the weighing scale.
+    - Select the appropriate field (Box, Strip, Tablet/Capsule) and then click **‘Add’** to enter the weight captured from the weighing scale.
     - If there is a second batch for the same field, place it on the weighing scale and click **‘Add’** to add the new weight captured.
 3. **Unit Quantity**: Add unit quantity directly if there are bulky or easy-to-count items.
 4. **Confirm Entry**: Click **‘Confirm Entry’** to enter data into the datasheet.
@@ -34,7 +34,8 @@ tab1, tab2 = st.tabs(["Entry Form", "Datasheet"])
 
 # Entry Form Tab
 with tab1:
-    st.subheader("Enter New Data (Entry Form)")
+    st.subheader("Enter New Data")
+    st.write("Please fill in the fields.")
 
     # Barcode scanning and drug name retrieval
     barcode_input = st.text_input("Scan Barcode", value=st.session_state['barcode'])
