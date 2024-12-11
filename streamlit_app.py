@@ -6,19 +6,25 @@ st.sidebar.title("Instructions for Data Entry")
 st.sidebar.write("""
 1. **Scan barcode and drug name**: Information will be retrieved from the database.
 2. **Weight Recording**: 
-    - Click on the appropriate field (Box, Strip, Tablet/Capsule) and then click **‘Record’** to enter the weight captured from the weighing scale.
+    - Click on the appropriate field (Box, Strip, Tablet/Capsule) and then click **‘Add’** to enter the weight captured from the weighing scale.
     - If there is a second batch for the same field, place it on the weighing scale and click **‘Add’** to add the new weight captured.
 3. **Unit Quantity**: Add unit quantity directly if there are bulky or easy-to-count items.
-4. **Confirm Entry**: Click **‘Confirm’** to enter data into the datasheet and clear the form for the next entry.
+4. **Confirm Entry**: Click **‘Confirm Entry’** to enter data into the datasheet.
 """)
 
-# Initialize variables for storing data
-data = []
-weights = {"box": [], "strip": [], "tablet": []}
-barcode = ""
-drug_name = ""
-bulk_quantity = 0
-selected_fields = []
+# Initialize session state if not already initialized
+if 'data' not in st.session_state:
+    st.session_state['data'] = []
+if 'weights' not in st.session_state:
+    st.session_state['weights'] = {"box": [], "strip": [], "tablet": []}
+if 'barcode' not in st.session_state:
+    st.session_state['barcode'] = ""
+if 'drug_name' not in st.session_state:
+    st.session_state['drug_name'] = ""
+if 'bulk_quantity' not in st.session_state:
+    st.session_state['bulk_quantity'] = 0
+if 'selected_fields' not in st.session_state:
+    st.session_state['selected_fields'] = []
 
 # Common Title for both tabs
 st.title("Drug Inventory Management System")
@@ -31,91 +37,75 @@ with tab1:
     st.subheader("Enter New Data (Entry Form)")
 
     # Barcode scanning and drug name retrieval
-    barcode = st.text_input("Scan Barcode", value=barcode)
-    drug_name = st.text_input("Drug Name", value=drug_name)
+    barcode_input = st.text_input("Scan Barcode", value=st.session_state['barcode'])
+    drug_name_input = st.text_input("Drug Name", value=st.session_state['drug_name'])
 
     # Normalize the selected fields
     normalized_fields = {"Box": "box", "Strip": "strip", "Tablet/Capsule": "tablet"}
 
     # Use st.pills to simulate pill-style multiselect
-    selected_fields = st.multiselect("Select fields to record weights:", ["Box", "Strip", "Tablet/Capsule"], default=selected_fields)
+    selected_fields_input = st.multiselect("Select fields to record weights:", ["Box", "Strip", "Tablet/Capsule"], default=st.session_state['selected_fields'])
 
     # Loop through selected fields to display input for weights
-    for field in selected_fields:
+    for field in selected_fields_input:
         normalized_field = normalized_fields.get(field)  # Get normalized key
         if normalized_field:
             with st.expander(f"Add weights for {field}"):
                 # Display current weights for the selected field
-                current_weights = weights[normalized_field]
+                current_weights = st.session_state['weights'][normalized_field]
                 st.write(f"Current recorded weights: {current_weights}")
 
                 # Input to add a new weight
-                new_weight = st.number_input(f"Enter weight for {field.lower()} (g):", min_value=0.0, step=0.01, format="%.2f")
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    new_weight = st.number_input(f"Enter weight for {field.lower()} (g): ", min_value=0.0, step=0.01, format="%.2f", key=f"{normalized_field}_weight_input")
+                
 
                 if st.button(f"Add weight for {field}", key=f"add_{normalized_field}"):
                     if new_weight > 0:
-                        weights[normalized_field].append(new_weight)
+                        st.session_state['weights'][normalized_field].append(new_weight)
                         st.success(f"Added weight {new_weight}g for {field.lower()}.")
                     else:
                         st.error("Weight must be greater than 0.")
 
     # Bulk quantity input
-    bulk_quantity = st.number_input("Bulk quantity (number of units):", min_value=0, step=1, value=bulk_quantity)
+    bulk_quantity_input = st.number_input("Bulk quantity (number of units):", min_value=0, step=1, value=st.session_state['bulk_quantity'])
 
     # Confirm button
     if st.button("Confirm Entry"):
-        if barcode and drug_name:
+        if barcode_input and drug_name_input:
             # Calculate averages
-            avg_weight_box = sum(weights["box"]) / len(weights["box"]) if weights["box"] else 0
-            avg_weight_strip = sum(weights["strip"]) / len(weights["strip"]) if weights["strip"] else 0
-            avg_weight_tablet = sum(weights["tablet"]) / len(weights["tablet"]) if weights["tablet"] else 0
+            avg_weight_box = sum(st.session_state['weights']["box"]) / len(st.session_state['weights']["box"]) if st.session_state['weights']["box"] else 0
+            avg_weight_strip = sum(st.session_state['weights']["strip"]) / len(st.session_state['weights']["strip"]) if st.session_state['weights']["strip"] else 0
+            avg_weight_tablet = sum(st.session_state['weights']["tablet"]) / len(st.session_state['weights']["tablet"]) if st.session_state['weights']["tablet"] else 0
 
-            # Store data in the data list
-            data.append({
-                "Code": barcode,
-                "Name": drug_name,
+            # Store data in the session state data list
+            st.session_state['data'].append({
+                "Code": barcode_input,
+                "Name": drug_name_input,
                 "Average_Weight_Box": avg_weight_box,
                 "Average_Weight_Strip": avg_weight_strip,
                 "Average_Weight_Tablet": avg_weight_tablet,
-                "Bulk_Quantity": bulk_quantity
+                "Bulk_Quantity": bulk_quantity_input
             })
 
-            # Reset form fields for next entry
-            barcode = ""
-            drug_name = ""
-            bulk_quantity = 0
-            selected_fields = []
-            weights = {"box": [], "strip": [], "tablet": []}
-
-            st.success("Entry confirmed and saved. Ready for next entry.")
+            st.success("Entry confirmed and saved.")
         else:
-            st.error("Please fill in the barcode and drug name fields.")
+            st.error("Please fill in the required fields.")
 
-    # Clear form button
-    if st.button("Clear Form"):
-        # Reset form fields to initial state
-        barcode = ""
-        drug_name = ""
-        bulk_quantity = 0
-        selected_fields = []
-        weights = {"box": [], "strip": [], "tablet": []}
-
-        st.success("Form cleared. Ready for new entry.")
 
 # Datasheet Tab
 with tab2:
     st.subheader("View and Manage Datasheet Entries")
 
-    # Create a dataframe from the data
-    data_df = pd.DataFrame(data)
+    # Create a dataframe from the data in session state
+    data_df = pd.DataFrame(st.session_state['data'])
 
     # Display the updated datasheet
     if not data_df.empty:
         data_df["Calculated_Quantity"] = data_df["Bulk_Quantity"] + (data_df["Average_Weight_Box"] // data_df["Average_Weight_Tablet"]).fillna(0)  # Example calculation
 
         # Use st.data_editor if available for editing
-        st.dataframe(data_df)
-
         st.data_editor(data_df, num_rows="dynamic")
 
         # Download button for datasheet
