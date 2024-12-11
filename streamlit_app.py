@@ -43,7 +43,7 @@ with tab1:
 
         # Weight recording for Box
         st.write("**Box**")
-        new_weight_box = st.number_input("Enter weight for box (g):", min_value=0.0, step=0.01, format="%.2f")
+        new_weight_box = st.number_input("Enter weight reading/unit for box (g):", min_value=0.0, step=0.01, format="%.2f")
         if st.form_submit_button("Add weight for Box"):
             if new_weight_box > 0:
                 st.session_state['weights']["box"].append(new_weight_box)
@@ -53,7 +53,7 @@ with tab1:
 
         # Weight recording for Strip
         st.write("**Strip**")
-        new_weight_strip = st.number_input("Enter weight for strip (g):", min_value=0.0, step=0.01, format="%.2f")
+        new_weight_strip = st.number_input("Enter weight reading/unit for strip (g):", min_value=0.0, step=0.01, format="%.2f")
         if st.form_submit_button("Add weight for Strip"):
             if new_weight_strip > 0:
                 st.session_state['weights']["strip"].append(new_weight_strip)
@@ -63,7 +63,7 @@ with tab1:
 
         # Weight recording for Tablet/Capsule
         st.write("**Tablet/Capsule**")
-        new_weight_tablet = st.number_input("Enter weight for tablet/capsule (g):", min_value=0.0, step=0.01, format="%.2f")
+        new_weight_tablet = st.number_input("Enter weight reading/unit for tablet/capsule (g):", min_value=0.0, step=0.01, format="%.2f")
         if st.form_submit_button("Add weight for Tablet/Capsule"):
             if new_weight_tablet > 0:
                 st.session_state['weights']["tablet"].append(new_weight_tablet)
@@ -72,7 +72,7 @@ with tab1:
                 st.error("Weight must be greater than 0.")
 
         # Bulk quantity input
-        bulk_quantity_input = st.number_input("Bulk quantity (number of units):", min_value=0, step=1, value=st.session_state['bulk_quantity'])
+        bulk_quantity_input = st.number_input("Bulk quantity/number of units:", min_value=0, step=1, value=st.session_state['bulk_quantity'])
 
         # Confirm button
         if st.form_submit_button("Confirm Entry"):
