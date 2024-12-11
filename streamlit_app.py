@@ -54,7 +54,7 @@ with tab1:
             with st.expander(f"Add weights for {field}"):
                 # Display current weights for the selected field
                 current_weights = st.session_state['weights'][normalized_field]
-                st.write(f"Current recorded weights: {current_weights}")
+                st.write(f"Recorded weights: {current_weights}")
 
                 # Input to add a new weight
                 col1, col2 = st.columns([3, 1])
