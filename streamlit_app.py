@@ -98,7 +98,7 @@ with tab1:
                 st.session_state['bulk_quantity'] = 0
                 st.session_state['weights'] = {"box": [], "strip": [], "tablet": []}
 
-                st.success("Entry confirmed and saved. Ready for next entry.")
+                st.success("Entry confirmed and saved.")
             else:
                 st.error("Please fill in the barcode and drug name fields.")
 
