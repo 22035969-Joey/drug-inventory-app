@@ -116,7 +116,6 @@ with tab2:
 
         # Use st.data_editor if available for editing
         st.data_editor(data_df, num_rows="dynamic")
-
-    
+        
     else:
         st.write("No data entered yet.")
