@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from io import BytesIO
 
 # Sidebar for instructions and information
 st.sidebar.title("Instructions for Data Entry")
@@ -116,6 +115,6 @@ with tab2:
 
         # Use st.data_editor if available for editing
         st.data_editor(data_df, num_rows="dynamic")
-        
+
     else:
         st.write("No data entered yet.")
