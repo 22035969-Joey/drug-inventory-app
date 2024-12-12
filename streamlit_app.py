@@ -118,8 +118,5 @@ with tab2:
         # Use st.data_editor if available for editing
         st.data_editor(data_df, num_rows="dynamic")
 
-        # Download button for datasheet
-        csv = data_df.to_csv(index=False)
-        st.download_button("Download Datasheet", csv, "datasheet.csv", "text/csv")
     else:
         st.write("No data entered yet.")
