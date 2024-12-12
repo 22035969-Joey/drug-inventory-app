@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO
 
 # Sidebar for instructions and information
 st.sidebar.title("Instructions for Data Entry")
@@ -11,7 +12,7 @@ st.sidebar.write("""
 3. **Unit Quantity**: 
     - Add unit quantity directly if there are bulky or easy-to-count items.
 4. **Confirm Entry**:
-    - Click **‘Confirm Entry’** to enter data into the datasheet.
+    - Click **'Confirm Entry'** to enter data into the datasheet.
 """)
 
 # Initialize session state if not already initialized
@@ -102,8 +103,6 @@ with tab1:
             else:
                 st.error("Please fill in the barcode and drug name fields.")
 
-      
-
 # Datasheet Tab
 with tab2:
     st.subheader("View and Manage Datasheet Entries")
@@ -118,5 +117,21 @@ with tab2:
         # Use st.data_editor if available for editing
         st.data_editor(data_df, num_rows="dynamic")
 
+        # Add a download button to export data to Excel
+        def to_excel(df):
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='Data')
+                writer.save()
+            processed_data = output.getvalue()
+            return processed_data
+
+        excel_data = to_excel(data_df)
+        st.download_button(
+            label="Download Datasheet",
+            data=excel_data,
+            file_name="datasheet.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     else:
         st.write("No data entered yet.")
